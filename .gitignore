@@ -1,0 +1,7 @@
+#Chrome Build Files
+*.crx
+*.pem
+
+API/
+
+.idea
