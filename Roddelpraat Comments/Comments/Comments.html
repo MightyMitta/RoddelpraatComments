@@ -1,0 +1,29 @@
+<template id="comment_template">
+    <li>
+        <div class="comment">
+            <div class="comment-header">
+                <div class="comment-author">
+                    <span class="comment-author-name"><b></b></span>
+                    <span class="comment-date"></span>
+                </div>
+            </div>
+            <div class="comment-body">
+                <div class="comment-text"></div>
+            </div>
+        </div>
+    </li>
+</template>
+
+<div id="custom-comments" class="comments">
+    <h1>Comments</h1>
+    <div>
+        <form class="post-comment">
+            <div class="field">
+                <label for="comment">Comment:</label>
+                <textarea name="comment" id="comment" maxlength="250" required></textarea>
+            </div>
+            <input id="post-comment" type="button" class="post-comment" value="Post Comment">
+        </form>
+    </div>
+    <ul class="commentList"></ul>
+</div>

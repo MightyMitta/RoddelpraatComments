@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "Roddelpraat Comments",
+  "description": "Roddelpraat Comments voegt de commentsection toe op www.roddelpraat.nl",
+  "version": "0.3.0",
+  "icons": {
+    "16": "images/icon-16.png",
+    "32": "images/icon-32.png",
+    "48": "images/icon-48.png",
+    "128": "images/icon-128.png"
+  },
+  "action": {
+    "default_popup": "Popup.html",
+    "default_title": "Roddelpraat Comments"
+  },
+  "host_permissions": ["https://www.roddelpraat.nl/*"],
+  "permissions": ["activeTab", "storage", "tabs"],
+  "content_scripts": [
+    {
+      "matches": ["https://www.roddelpraat.nl/*"],
+      "js": ["comments/Comments.js"]
+    }
+  ],
+  "web_accessible_resources": [{
+    "matches": ["https://www.roddelpraat.nl/*"],
+    "resources": [
+      "Comments/Comments.html",
+      "Comments/Comments.js",
+      "Comments/Comments.css",
+      "Login/Login.html",
+      "Login/Login.js",
+      "Login/Login.css",
+      "Settings/Settings.html",
+      "Settings/Settings.js",
+      "Settings/Settings.css"
+    ]
+  }]
+}

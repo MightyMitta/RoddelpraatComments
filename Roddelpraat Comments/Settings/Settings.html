@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="Settings.css">
+    <link rel="stylesheet" href="../Global.css">
+</head>
+<body>
+
+<form>
+    <div class="labels">
+        <label for="username">Username</label>
+        <label for="prim-color">Primary Color</label>
+        <label for="sec-color">Secondary Color</label>
+    </div>
+
+    <div class="fields">
+        <input class="field" id="username" type="text" placeholder="Username">
+        <select class="field" id="prim-color">
+            <option value="rp-paars">RP paars</option>
+            <option value="rp-blauw">RP blauw</option>
+        </select>
+        <select class="field" id="sec-color">
+            <option value="rp-paars">RP paars</option>
+            <option value="rp-blauw">RP blauw</option>
+        </select>
+    </div>
+    <input class="button" type="button" value="Sumbit">
+</form>
+
+<div id="status"></div>
+
+<script src="Settings.js"></script>
+</body>
+</html>
