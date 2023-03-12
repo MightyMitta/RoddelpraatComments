@@ -8,7 +8,7 @@ Deze extensie voegt comments toe aan de [RoddelPraat website](https://www.roddel
 
 
 ## Installatie
-Download de meest recente release van de extensie via [releases](https://www.github.com/MightyMitta).
+Download de meest recente release van de extensie via [releases](https://github.com/MightyMitta/RoddelpraatComments/releases).
 
 ### Installatie met .crx file
 1. Open het .zip bestand
