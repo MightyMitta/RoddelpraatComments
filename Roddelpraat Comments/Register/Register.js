@@ -1,16 +1,18 @@
-document.querySelector('.login-submit').addEventListener("click", login);
+document.querySelector('.register-submit').addEventListener("click", registerUser);
 
-async function login() {
+async function registerUser() {
     const username = document.querySelector('#username').value;
     const password = document.querySelector('#password').value;
+    const email = document.querySelector('#email').value;
 
     const data = {
         username: username,
-        password: password
+        password: password,
+        email: email
     }
 
     // request validation from server
-    await fetch('https://roddelpraat-api.azurewebsites.net/Login/', {
+    await fetch('https://roddelpraat-api.azurewebsites.net/Register/', {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
@@ -20,7 +22,7 @@ async function login() {
         if (response.ok) {
             response.json().then(data => {
                 chrome.storage.local.set({ "token": data.token });
-                window.location.replace(chrome.runtime.getURL('Popup.html'));
+                window.location.href = "Popup.html";
             });
         } else {
             // to be replaced with a text on the page

@@ -12,3 +12,63 @@ body {
     padding: 5px;
     color: rgb(213, 209, 204);
 }
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 300px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    margin: 10px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+input[type=button] {
+    background: rgb(131 26 227);
+    border: rgb(213, 209, 204) 1px solid;
+    color: rgb(213, 209, 204);
+    padding: 0.5rem;
+    margin: 0.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+input[type=text], input[type=password], input[type=email] {
+    background: rgb(131 26 227);
+    border: rgb(213, 209, 204) 1px solid;
+    color: rgb(213, 209, 204);
+    padding: 0.5rem;
+    margin: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.labels, .fields {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.hidden {
+    display: none;
+}

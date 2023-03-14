@@ -2,16 +2,22 @@ const tabs = await chrome.tabs.query({
   url: ['https://www.roddelpraat.nl/*']
 });
 
-// chrome.storage.sync.get(['token'], function(result) {
-//     alert(result.token);
-// });
-
-
-
 loadTabs();
-registerLoginButton();
-registerSettingsButton();
-registerHeaderButton();
+
+chrome.storage.local.get(['token'], function(result) {
+
+    if (result.token !==   undefined) {
+        document.querySelector('.login-button').classList.add('hidden');
+        document.querySelector('.register-button').classList.add('hidden');
+        registerLogoutButton();
+    } else {
+        document.querySelector('.logout-button').classList.add('hidden');
+        registerLoginButton();
+        registerRegisterButton();
+    }
+    registerSettingsButton();
+    registerHeaderButton();
+});
 
 function loadTabs() {
     const collator = new Intl.Collator();
@@ -66,12 +72,31 @@ function registerHeaderButton() {
     });
 }
 
+function registerLogoutButton() {
+    const logoutButton = document.querySelector('.logout-button');
+
+    logoutButton.addEventListener('click', async () => {
+        chrome.storage.local.remove(['token'], function() {
+            window.location.replace(chrome.runtime.getURL('Popup.html'));
+        });
+    });
+}
+
 async function registerLoginButton() {
     // Open roddelpraat.nl in new tab
     const loginButton = document.querySelector('.login-button');
 
     loginButton.addEventListener('click', async () => {
         window.location.replace(chrome.runtime.getURL('Login/Login.html'));
+    });
+}
+
+async function registerRegisterButton() {
+    // Open roddelpraat.nl in new tab
+    const registerButton = document.querySelector('.register-button');
+
+    registerButton.addEventListener('click', async () => {
+        window.location.replace(chrome.runtime.getURL('Register/Register.html'));
     });
 }
 

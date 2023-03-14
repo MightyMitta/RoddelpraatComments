@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Roddelpraat Comments",
   "description": "Roddelpraat Comments voegt de commentsection toe op www.roddelpraat.nl",
-  "version": "0.3.1",
+  "version": "0.3.8",
   "icons": {
     "16": "images/icon-16.png",
     "32": "images/icon-32.png",
@@ -29,7 +29,8 @@
       "Comments/Comments.css",
       "Login/Login.html",
       "Login/Login.js",
-      "Login/Login.css",
+      "Register/Register.html",
+      "Register/Register.js",
       "Settings/Settings.html",
       "Settings/Settings.js",
       "Settings/Settings.css"

@@ -1,8 +1,6 @@
 const containsArticle = document.querySelector('article') !== null;
 let article;
 
-console.log('Loaded Comments.js');
-
 loadComments();
 
 async function loadComments() {
@@ -29,7 +27,7 @@ async function loadComments() {
 
             let commentList = [];
 
-            requestComments().then((data) => {
+            getCommentsFromArticle().then((data) => {
                 data.forEach((comment) => {
                     commentList.push(comment);
                 });
@@ -71,7 +69,7 @@ function addCss() {
     head.appendChild(link);
 }
 
-async function requestComments() {
+async function getCommentsFromArticle() {
     const response = await fetch('https://roddelpraat-api.azurewebsites.net/GetAllCommentsFromArticle/' + article.id.split('-')[1]);
     return await response.json();
 }
@@ -81,6 +79,10 @@ async function registerPostButton() {
     const postButton = document.querySelector('#post-comment');
 
     postButton.addEventListener('click', async () => {
+
+        const result = await chrome.storage.local.get(['token']);
+        console.log(result.token);
+
         const comment = document.querySelector('#comment').value;
 
         if (comment.length === 0) {
@@ -90,18 +92,16 @@ async function registerPostButton() {
 
         const articleId = article.id.split('-')[1];
 
-        fetch('https://roddelpraat-api.azurewebsites.net/AddComment', {
+        await fetch('https://roddelpraat-api.azurewebsites.net/CreateComment', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + result.token
             },
             body: JSON.stringify({
                 "userId": 2,
                 "message": comment,
                 "articleId": articleId,
-                "timePosted": new Date().toISOString(),
-                "likeCount": 0,
-                "dislikeCount": 0,
                 "isCommentTo": null
             })
         }).then((res) => {
