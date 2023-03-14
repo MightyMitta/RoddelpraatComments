@@ -1,4 +1,9 @@
 document.querySelector('.register-submit').addEventListener("click", registerUser);
+document.querySelector('.back-button').addEventListener("click", navigateBack)
+
+function navigateBack() {
+    window.location.href = "../Popup.html";
+}
 
 async function registerUser() {
     const username = document.querySelector('#username').value;
@@ -12,7 +17,7 @@ async function registerUser() {
     }
 
     // request validation from server
-    await fetch('https://roddelpraat-api.azurewebsites.net/Register/', {
+    await fetch('https://roddelpraat-api.azurewebsites.net/Register', {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
@@ -20,13 +25,11 @@ async function registerUser() {
         }
     }).then(response => {
         if (response.ok) {
-            response.json().then(data => {
-                chrome.storage.local.set({ "token": data.token });
-                window.location.href = "Popup.html";
-            });
+            alert("Verifieer uw account om in te loggen.")
+            window.location.href = "../Popup.html";
         } else {
             // to be replaced with a text on the page
-            alert("Username or password is incorrect");
+            alert("Er is iets misgegaan, probeer het opnieuw of neem contact op de ontwikkelaar.");
         }
     });
 }

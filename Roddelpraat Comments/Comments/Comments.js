@@ -1,6 +1,30 @@
 const containsArticle = document.querySelector('article') !== null;
 let article;
 
+getVersion();
+
+async function getVersion() {
+    const localVersion = chrome.runtime.getManifest().version;
+    const liveVersion = await fetch('https://raw.githubusercontent.com/MightyMitta/RoddelpraatComments/release/Roddelpraat%20Comments/manifest.json').then(response => response.json()).then(data => data.version);
+
+    if (localVersion !== liveVersion) {
+        newUpdate(liveVersion);
+    }
+}
+
+function newUpdate(version) {
+    const updateNode = document.createElement('h1');
+    updateNode.innerHTML = `<a target="_blank" href="https://github.com/MightyMitta/RoddelpraatComments/releases" style="color: white">[${version}] Roddelpraat Comments Update Beschikbaar!</a>`;
+    updateNode.style.display = 'flex';
+    updateNode.style.justifyContent = 'center';
+    updateNode.style.alignItems = 'center';
+    updateNode.style.height = '50px';
+    updateNode.style.backgroundColor = 'red';
+    updateNode.style.margin = '0';
+
+    document.querySelector('.header').insertBefore(updateNode, document.querySelector('.header').firstChild);
+}
+
 loadComments();
 
 async function loadComments() {
@@ -81,7 +105,6 @@ async function registerPostButton() {
     postButton.addEventListener('click', async () => {
 
         const result = await chrome.storage.local.get(['token']);
-        console.log(result.token);
 
         const comment = document.querySelector('#comment').value;
 
@@ -99,7 +122,6 @@ async function registerPostButton() {
                 'Authorization': 'Bearer ' + result.token
             },
             body: JSON.stringify({
-                "userId": 2,
                 "message": comment,
                 "articleId": articleId,
                 "isCommentTo": null
