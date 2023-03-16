@@ -1,11 +1,13 @@
 document.querySelector('.register-submit').addEventListener("click", registerUser);
 document.querySelector('.back-button').addEventListener("click", navigateBack)
+const errorMessage = document.querySelector('.error-message');
 
 function navigateBack() {
     window.location.href = "../Popup.html";
 }
 
 async function registerUser() {
+    errorMessage.textContent = '';
     const username = document.querySelector('#username').value;
     const password = document.querySelector('#password').value;
     const email = document.querySelector('#email').value;
@@ -17,19 +19,31 @@ async function registerUser() {
     }
 
     // request validation from server
-    await fetch('https://roddelpraat-api.azurewebsites.net/Register', {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }).then(response => {
+    let response;
+
+    try {
+        response = await (await fetch('https://roddelpraat-api.azurewebsites.net/Register', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json',
+                'allow-control-allow-origin': '*'
+            }
+        })).json();
+
         if (response.ok) {
             alert("Verifieer uw account om in te loggen.")
             window.location.href = "../Popup.html";
-        } else {
-            // to be replaced with a text on the page
-            alert("Er is iets misgegaan, probeer het opnieuw of neem contact op de ontwikkelaar.");
+        } else if (response.status ===   400){
+            if (response.errors.Email[0]){
+                errorMessage.textContent = "Voer een geldig e-mailadres in";
+                return;
+            }
+            errorMessage.textContent = "Er is een fout opgetreden. Probeer het opnieuw of neem contact op met de ontwikkelaar in de Discord server.";
+
         }
-    });
+    } catch (error) { }
+
+
+
 }

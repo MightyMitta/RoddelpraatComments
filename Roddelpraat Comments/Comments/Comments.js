@@ -1,5 +1,6 @@
-const containsArticle = document.querySelector('article') !== null;
-let article;
+const article = document.querySelector('article');
+let message;
+let token;
 
 getVersion();
 
@@ -7,7 +8,7 @@ async function getVersion() {
     const localVersion = chrome.runtime.getManifest().version;
     const liveVersion = await fetch('https://raw.githubusercontent.com/MightyMitta/RoddelpraatComments/release/Roddelpraat%20Comments/manifest.json').then(response => response.json()).then(data => data.version);
 
-    if (localVersion !== liveVersion) {
+    if (localVersion < liveVersion) {
         newUpdate(liveVersion);
     }
 }
@@ -28,49 +29,109 @@ function newUpdate(version) {
 loadComments();
 
 async function loadComments() {
-    if (containsArticle) {
-        addCss();
+    if (article) {
+        injectCss();
 
-        const commentList = document.querySelector(".comments");
+        const commentSection = document.querySelector(".comments");
 
-        if (commentList != null) {
-            commentList.remove();
+        if (commentSection != null) {
+            commentSection.remove();
         }
 
-        article = document.querySelector('article');
+        const articleInner = document.querySelector('div.article-inner');
 
-        const pane = document.querySelector('div.article-inner');
+        const commentSectionCode = chrome.runtime.getURL('Comments/Comments.html');
 
-        const comments = chrome.runtime.getURL('Comments/Comments.html');
-
-        if (pane !=  null) {
+        if (articleInner != null) {
             const commentsContainer = document.createElement('div');
 
-            commentsContainer.innerHTML = await (await fetch(comments)).text();
-            pane.after(commentsContainer);
+            commentsContainer.innerHTML = await (await fetch(commentSectionCode)).text();
+            articleInner.after(commentsContainer);
+            registerPostButton();
 
             let commentList = [];
 
-            getCommentsFromArticle().then((data) => {
-                data.forEach((comment) => {
-                    commentList.push(comment);
+            message = document.querySelector('.notify-message');
+
+            const data = await getCommentsFromArticle();
+
+            if (data ===   undefined || data.length ===   0) {
+                message.innerText = 'Er zijn nog geen comments geplaatst onder dit artikel.';
+                return;
+            }
+
+            if (token ===   undefined) {
+                token = await (await chrome.storage.local.get('token')).token;
+            }
+
+            let response;
+
+            try {
+                response = await fetch('https://roddelpraat-api.azurewebsites.net/Auth/GetUser', {
+                    method: 'GET',
+                    'allow-control-allow-origin': '*',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    }
                 });
 
-                commentList.sort((a, b) => {
-                    return new Date(b.timePosted) - new Date(a.timePosted);
-                });
 
-                commentList.forEach((comment) => {
-                    insertComments(comment);
-                });
+            } catch (error) {
+            }
+
+            if (response.status ===   401) {
+                document.querySelector('#comment').disabled = 'true';
+                document.querySelector('#post-comment').disabled = 'true';
+                document.querySelector('#post-comment').style.cursor = 'not-allowed';
+            }
+
+            let user;
+            if (response.status ===   200) {
+                user = await response.json();
+            } else {
+                user = {
+                    id: 0
+                };
+            }
+
+
+            data.forEach((comment) => {
+                commentList.push(comment);
             });
+
+            commentList.sort((a, b) => {
+                return new Date(b.timePosted) - new Date(a.timePosted);
+            });
+
+            commentList.forEach((comment) => {
+                insertComment(comment, user.id);
+            });
+
+            const primary = await (await chrome.storage.local.get('primary_color')).primary_color;
+            const secondary = await (await chrome.storage.local.get('secondary_color')).secondary_color;
+
+            const comments = document.querySelectorAll('.comment');
+            for (let i = 0; i < commentSectionCode.length; i++) {
+                if (comments[i] === undefined) {
+                    break;
+                }
+
+                if (i % 2 === 0) {
+                    if (primary) {
+                        comments[i].style.backgroundColor = primary;
+                    }
+                } else {
+                    if (secondary) {
+                        comments[i].style.backgroundColor = secondary;
+                    }
+                }
+            }
         }
-        //location.hash = "#custom-comments";
-        registerPostButton();
     }
 }
 
-function insertComments(comment) {
+function insertComment(comment, userId) {
     const commentTemplate = document.querySelector('#comment_template').content.firstElementChild.cloneNode(true);
     const comments = document.querySelector('.comments ul');
 
@@ -78,11 +139,28 @@ function insertComments(comment) {
     commentTemplate.querySelector('.comment-text').textContent = comment.message;
     commentTemplate.querySelector('.comment-author-name b').textContent = comment.user.username;
     commentTemplate.querySelector('.comment-date').textContent = timePosted;
+    commentTemplate.querySelector('.delete-comment').id = comment.id;
+    commentTemplate.querySelector('.delete-comment').addEventListener('click', async () => {
+        await fetch('https://roddelpraat-api.azurewebsites.net/DeleteComment/' + comment.id, {
+            method: 'DELETE',
+            'allow-control-allow-origin': '*',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            }
+        });
 
+        loadComments();
+    });
+
+    if (comment.user.id !== userId) {
+        commentTemplate.querySelector('.delete-comment').remove();
+    }
     comments.appendChild(commentTemplate);
+
 }
 
-function addCss() {
+function injectCss() {
     const head = document.head;
     const link = document.createElement("link");
 
@@ -94,42 +172,49 @@ function addCss() {
 }
 
 async function getCommentsFromArticle() {
-    const response = await fetch('https://roddelpraat-api.azurewebsites.net/GetAllCommentsFromArticle/' + article.id.split('-')[1]);
+    let response;
+    try {
+        response = await fetch('https://roddelpraat-api.azurewebsites.net/GetAllCommentsFromArticle/' + article.id.split('-')[1]);
+        if (response.ok) {
+            message.style.display = 'none';
+        } else if (response.status === 404) {
+            message.innerText = 'Er zijn nog geen comments geplaatst onder dit artikel.';
+        } else {
+            message.innerText = 'Er is iets mis gegaan met het ophalen van de comments. Probeer het later opnieuw.';
+        }
+    } catch (error) {
+    }
     return await response.json();
 }
 
 async function registerPostButton() {
-    // Open roddelpraat.nl in new tab
     const postButton = document.querySelector('#post-comment');
 
     postButton.addEventListener('click', async () => {
-
-        const result = await chrome.storage.local.get(['token']);
+        if (token === undefined) {
+            token = await (await chrome.storage.local.get('token')).token;
+        }
 
         const comment = document.querySelector('#comment').value;
 
-        if (comment.length === 0) {
-            alert('Please enter a comment');
-            return;
-        }
-
         const articleId = article.id.split('-')[1];
 
-        await fetch('https://roddelpraat-api.azurewebsites.net/CreateComment', {
+        const response = await fetch('https://roddelpraat-api.azurewebsites.net/CreateComment', {
             method: 'POST',
+            'allow-control-allow-origin': '*',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + result.token
+                'Authorization': 'Bearer ' + token
             },
             body: JSON.stringify({
                 "message": comment,
                 "articleId": articleId,
                 "isCommentTo": null
             })
-        }).then((res) => {
-            if (res.status === 200) {
-                loadComments();
-            }
         });
+        if (response.status === 200) {
+            loadComments();
+        }
     });
 }
+
