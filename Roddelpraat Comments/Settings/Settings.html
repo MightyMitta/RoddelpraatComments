@@ -12,24 +12,19 @@
 
 <form>
     <div class="labels">
-        <label for="username">Username</label>
-        <label for="prim-color">Primary Color</label>
-        <label for="sec-color">Secondary Color</label>
     </div>
 
     <div class="fields">
-        <input class="field" id="username" type="text" placeholder="Username">
-        <select class="field" id="prim-color">
-            <option value="rp-paars">RP paars</option>
-            <option value="rp-blauw">RP blauw</option>
-        </select>
-        <select class="field" id="sec-color">
-            <option value="rp-paars">RP paars</option>
-            <option value="rp-blauw">RP blauw</option>
-        </select>
+        <label for="prim-color">Primary Color</label>
+        <input type="color" class="field" id="prim-color">
+
+        <label for="sec-color">Secondary Color</label>
+        <input type="color" class="field" id="sec-color">
     </div>
-    <input class="button" type="button" value="Sumbit">
+    <input id="submit-settings" class="button" type="button" value="Submit">
 </form>
+
+<button id="reset-settings" class="button">Reset</button>
 
 <div id="status"></div>
 
