@@ -24,6 +24,17 @@ Download de meest recente release van de extensie via [releases](https://github.
 3. Open de extensie pagina van de browser. Dit is waarschijnlijk iets in de richting als: `opera://extensions` or `chrome://extensions`
 4. Klik op`Load unpacked` en selecteer locatie die je eerder voor de map gekozen hebt
 
+## Preview
+Hier kan je registreren, inloggen en je instellingen aanpassen.
+Ook kan je hier alle pagina's zien van [roddelpraat.nl](http://roddelpraat.nl) zien die je op dat moment op hebt staan.
+
+![image](https://user-images.githubusercontent.com/40645681/225743174-fbf252fc-584e-4c49-832f-334f9f73142b.png)
+
+
+### De comment sectie
+Hier kan je comments lezen en plaatsen (als je ingelogd bent).
+
+![image](https://user-images.githubusercontent.com/40645681/225743194-94d20c0b-d271-4c72-848d-bdeb18333e7b.png)
     
 ## Demo
 
