@@ -27,6 +27,8 @@ Download de meest recente release van de extensie via [releases](https://github.
     
 ## Demo
 
+## Need Help?
+Hulp nodig? Join de [Discord](https://discord.com/invite/6xtcWhrjZE) voor vragen!
 
 ## 🔗 Links
 
